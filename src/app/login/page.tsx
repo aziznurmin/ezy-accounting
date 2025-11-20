@@ -4,13 +4,17 @@ import { createClient } from "@/lib/supabase/client";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function LoginPage() {
   const supabase = createClient();
   const router = useRouter();
+  const [redirectUrl, setRedirectUrl] = useState<string | null>(null);
 
   useEffect(() => {
+    // This code now runs only in the browser, where `location` is available.
+    setRedirectUrl(`${location.origin}/auth/callback`);
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event) => {
@@ -31,14 +35,17 @@ export default function LoginPage() {
           </h2>
         </div>
         <div className="rounded-lg bg-white p-8 shadow-lg">
-          <Auth
-            supabaseClient={supabase}
-            appearance={{ theme: ThemeSupa }}
-            providers={[]}
-            theme="light"
-            view="sign_in"
-            redirectTo={`${location.origin}/auth/callback`}
-          />
+          {/* We wait until redirectUrl is set on the client before rendering the Auth component */}
+          {redirectUrl && (
+            <Auth
+              supabaseClient={supabase}
+              appearance={{ theme: ThemeSupa }}
+              providers={[]}
+              theme="light"
+              view="sign_in"
+              redirectTo={redirectUrl}
+            />
+          )}
         </div>
       </div>
     </div>
