@@ -15,6 +15,7 @@ type Product = {
   price: number;
   sku: string | null;
   stock_quantity: number | null;
+  category_id: string | null;
   categories: { name: string } | null;
   [key: string]: any;
 };
@@ -32,7 +33,7 @@ export default function ProductsPageClient({
         <h1 className="text-2xl font-bold">Products</h1>
         <AddProductDialog categories={categories} />
       </div>
-      <ProductTable products={initialProducts} />
+      <ProductTable products={initialProducts} categories={categories} />
     </div>
   );
 }
